@@ -1,7 +1,7 @@
 NAME = get_next_line
 CFLAGS = -Wall -Werror -Wextra -g
-CC = gcc
-SRC = get_next_line.c
+CC = cc
+SRC = get_next_line.c get_next_line_utils.c
 
 all: $(NAME)
 
