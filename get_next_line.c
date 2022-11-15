@@ -45,7 +45,7 @@ char	*copy(char *buff, int read_rtn)
 	while (stash.index < stash.used)
 	{
 		if (stash.str[stash.index] == '\n')
-			return (ft_strndup(stash.str, stash.index)); //if return, then its the newline return string.
+			return (ft_strndup(stash.str, stash.index + 1)); //if return, then its the newline return string.
 		stash.index++;
 	}
 	return (rtn);
