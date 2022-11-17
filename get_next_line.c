@@ -1,12 +1,5 @@
 #include "get_next_line.h"
 
-
-//get_next_line
-//read_line
-//copy
-//vec_init_or_grow -> ft_bzero
-//ft_strlcat
-
 int		vec_init_or_grow(t_vec *stash, size_t new_size)
 {
 	if (stash->used == 0)
@@ -25,30 +18,53 @@ int		vec_init_or_grow(t_vec *stash, size_t new_size)
 		if (!tmp)
 			return (-1);
 		tmp[new_size] = '\0';
-		strncpy(tmp, stash->str, stash->used);
+		ft_strlcpy(tmp, stash->str, stash->used + 1);
 		free(stash->str);
 		stash->str = tmp;
 	}
 	return (0);
 }
 
+
+int		stash_cut(t_vec *stash)
+{
+	char *tmp;
+	tmp = malloc (sizeof(char) * (stash->used - stash->index));
+	if (!tmp)
+		return (-1);
+	tmp[stash->used - stash->index] = '\0';
+	ft_strlcpy(tmp, &stash->str[stash->index + 1], stash->used - stash->index + 1);
+	stash->used = stash->used - (stash->index + 1);
+	stash->index = 0;
+	free (stash->str);
+	stash->str = tmp;
+
+	return (0);
+}
 char	*copy(char *buff, int read_rtn)
 {
 	static t_vec stash =(t_vec){NULL, 0, 0};
-	char	*rtn;
 
-	rtn = NULL;
-	if (vec_init_or_grow(&stash, stash.used + read_rtn) < 0)
-		return (NULL);
-	stash.used = stash.used + read_rtn;
-	ft_strlcat(stash.str, buff, stash.used + 1);
+	if (stash.used > 0 && stash.used != (stash.index + 1) )
+	{
+		if (stash_cut(&stash) < 0)
+			return (NULL);
+	}
+	if (read_rtn)
+	{
+		if (vec_init_or_grow(&stash, stash.used + read_rtn) < 0)
+			return (NULL);
+		stash.used = stash.used + read_rtn;
+		ft_strlcat(stash.str, buff, stash.used + 1);
+	}
 	while (stash.index < stash.used)
 	{
-		if (stash.str[stash.index] == '\n')
+		if (stash.str[stash.index] == '\n'|| (stash.index + 1) == stash.used)
 			return (ft_strndup(stash.str, stash.index + 1)); //if return, then its the newline return string.
 		stash.index++;
 	}
-	return (rtn);
+	return (NULL);
+
 }
 
 char	*read_line(int fd)
@@ -78,8 +94,10 @@ char *get_next_line(int fd)
 int main()
 {
 	int fd;
+	
 	fd = open("text.txt", O_RDONLY);
-	for (int i = 0; i < 3; i++)
+	printf("%s", str);
+		for (int i = 0; i < 7; i++)
 	{
 		printf("%s", get_next_line(fd));
 	}
