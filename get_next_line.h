@@ -1,6 +1,6 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# define BUFF_SIZE 10
+# define BUFF_SIZE 16
  
 #include <stdlib.h>
 #include <unistd.h>
