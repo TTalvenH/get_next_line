@@ -96,7 +96,6 @@ int main()
 	int fd;
 	
 	fd = open("text.txt", O_RDONLY);
-	printf("%s", str);
 		for (int i = 0; i < 7; i++)
 	{
 		printf("%s", get_next_line(fd));
