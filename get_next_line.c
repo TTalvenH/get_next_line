@@ -47,7 +47,9 @@ char	*stash_cut(t_vec *stash)
 char	*copy(char *buff, int read_rtn)
 {
 	static t_vec stash =(t_vec){NULL, 0, 0};
+	char	*rtn;
 
+	rtn = NULL;
 	if (read_rtn)
 	{
 		if (vec_init_or_grow(&stash, stash.used + read_rtn) < 0)
@@ -55,18 +57,20 @@ char	*copy(char *buff, int read_rtn)
 		stash.used = stash.used + read_rtn;
 		ft_strlcat(stash.str, buff, stash.used + 1, stash.used - read_rtn);
 	}
-	while (stash.index < stash.used)
+	while (stash.index < stash.used )
 	{
-		if (stash.str[stash.index] == '\n' || (stash.index + 1 == stash.used && !read_rtn))
+		if (stash.str[stash.index] == '\n' || (stash.index + 1 == stash.used && read_rtn < BUFF_SIZE))
 			return (stash_cut(&stash)); 
 		stash.index++;
 	}
 	if(!read_rtn)
 	{
+		if (stash.str)
+			rtn = stash.str;
 		free (stash.str);
 		stash.index = 0;
 	}
-	return (NULL);
+	return (rtn);
 }
 
 char *get_next_line(int fd)
@@ -84,6 +88,11 @@ char *get_next_line(int fd)
 	while (!rtn && read_rtn)
 	{
 		read_rtn = read(fd, buff, BUFF_SIZE);
+		if (read_rtn < 0)
+		{
+			free (buff);
+			return (NULL);
+		}
 		rtn = copy(buff, read_rtn);
 	}
 	free(buff);
@@ -94,8 +103,8 @@ int main()
 {
 	int fd = 0;
 	char	*str = NULL;
-	int	i = 1;
-	fd = open("text.txt", O_RDONLY);
+	int	i = 15;
+	fd = open("42_no_nl", O_RDONLY);
 	while(str || i--)
 	{
 		str = get_next_line(fd);
@@ -103,7 +112,7 @@ int main()
 			printf("%s", str);
 		free(str);
 	}
-	//system("export MallocStackLogging=1");
-    //system("leaks get_next_line");
+	// system("export MallocStackLogging=1");
+    // system("leaks get_next_line");
 	return (0);
 }
